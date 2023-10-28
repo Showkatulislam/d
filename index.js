@@ -1,15 +1,30 @@
-const express = require('express');
+const express = require('express')
 const cors = require('cors');
-require('dotenv').config()
+const morgan = require('morgan');
+const http = require('http');
+const ConnectionDB = require('./src/config/dbconnection');
+const router = require('./src/routes/router');
+const { port } = require('./src/secrete');
 
 
-const port=process.env.PORT||5000
-const app=express()
+
+var app = express()
 
 app.use(cors())
+app.use(morgan('combined'))
+app.use(express.json())
 
-app.get("/",(req,res)=>{
-    res.send("hello world")
+const myport=port
+
+const server=http.createServer(app)
+ 
+app.get('/', (req,res)=> {
+  res.send('hello, world!')
 })
 
-app.listen(port)
+app.use('/doc', router);
+
+server.listen(myport, () => {
+    console.log('Server running on http://localhost:8080/');
+    ConnectionDB();
+  });
